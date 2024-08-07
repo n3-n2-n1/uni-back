@@ -6,7 +6,12 @@ const app = express();
 const PORT = process.env.PORT || 5000;
 
 // Middleware
-app.use(cors({ origin: '*' }));
+app.use(cors({
+  origin: 'https://uni-poc.vercel.app',
+  methods: 'GET,HEAD,PUT,PATCH,POST,DELETE',
+  credentials: true,
+  optionsSuccessStatus: 204
+}));
 app.use(express.json());
 
 // Conexión a MongoDB Atlas
