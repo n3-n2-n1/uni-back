@@ -15,7 +15,7 @@ app.use(cors({
 app.use(express.json());
 
 // Conexión a MongoDB Atlas
-const uri = 'mongodb+srv://krystalloquartz:t1OZku8vzjBJE0qG@cluster0.mongodb.net/base_datos?retryWrites=true&w=majority:27017';
+const uri = 'mongodb+srv://krystalloquartz:t1OZku8vzjBJE0qG@cluster0.mongodb.net/uni-test?retryWrites=true&w=majority:27017';
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
   .catch(err => console.log(err));
