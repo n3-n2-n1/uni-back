@@ -15,10 +15,10 @@ app.use(cors({
 app.use(express.json());
 
 // Conexión a MongoDB Atlas
-const uri = 'mongodb+srv://krystalloquartz:t1OZku8vzjBJE0qG@cluster0.mongodb.net/uni-test?retryWrites=true&w=majority:27017';
+const uri = 'mongodb+srv://krystalloquartz:t1OZku8vzjBJE0qG@cluster0.mlp0w.mongodb.net/uni-test:27017';
 mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
   .then(() => console.log('MongoDB connected'))
-  .catch(err => console.log(err));
+  .catch(err => console.error('MongoDB connection error:', err));
 
 // Esquema y modelo de Pedido
 const orderSchema = new mongoose.Schema({
@@ -43,7 +43,7 @@ app.post('/orders', async (req, res) => {
     const newOrder = await Order.insertMany(cart);
     res.status(201).json(newOrder);
   } catch (error) {
-    console.log('Error al insertar en MongoDB:', error);
+    console.error('Error al insertar en MongoDB:', error);
     res.status(400).json({ error: error.message });
   }
 });
