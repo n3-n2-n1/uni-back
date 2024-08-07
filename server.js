@@ -1,69 +1,45 @@
 const express = require('express');
-const bodyParser = require('body-parser');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const fs = require('fs');
-const path = require('path');
+
 const app = express();
-const port = 3000;
+const PORT = process.env.PORT || 5000;
 
-// Middleware para permitir CORS
+// Middleware
 app.use(cors());
+app.use(express.json());
 
-// Middleware para parsear el body de las requests
-app.use(bodyParser.json());
+// Conexión a MongoDB Atlas
+const uri = 'mongodb+srv://krystalloquartz:<password>@cluster0.mlp0w.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0';
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
 
-// Ruta para la raíz que muestra un mensaje simple
-app.get('/', (req, res) => {
-  res.send('Bienvenido a la API. Usa /data para enviar o recibir datos.');
+// Esquema y modelo de Pedido
+const orderSchema = new mongoose.Schema({
+  id: Number,
+  name: String,
+  description: String,
+  price: Number,
+  quantity: Number,
+  image: String,
 });
 
-// Ruta para recibir datos via POST y guardarlos en un archivo JSON
-app.post('/data', (req, res) => {
-  const data = req.body;
-  const filePath = path.join(__dirname, 'data.json');
+const Order = mongoose.model('Order', orderSchema);
 
-  console.log('Datos recibidos:', data);
+// Ruta para manejar las solicitudes de pedidos
+app.post('/orders', async (req, res) => {
+  const cart = req.body.cart;
 
-  if (!data || !data.cart) {
-    return res.status(400).json({ error: 'Datos inválidos, se esperaba un campo "cart"' });
+  try {
+    const newOrder = await Order.insertMany(cart);
+    res.status(201).json(newOrder);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
-
-  fs.readFile(filePath, 'utf8', (err, fileData) => {
-    if (err && err.code !== 'ENOENT') {
-      console.error('Error leyendo el archivo:', err);
-      return res.status(500).json({ error: 'Error leyendo el archivo' });
-    }
-
-    const jsonData = fileData ? JSON.parse(fileData) : [];
-    jsonData.push(data);
-
-    fs.writeFile(filePath, JSON.stringify(jsonData, null, 2), (err) => {
-      if (err) {
-        console.error('Error guardando los datos:', err);
-        return res.status(500).json({ error: 'Error guardando los datos' });
-      }
-
-      res.status(201).json({ message: 'Datos guardados exitosamente' });
-    });
-  });
-});
-
-// Ruta para exponer los datos guardados en el archivo JSON
-app.get('/data', (req, res) => {
-  const filePath = path.join(__dirname, 'data.json');
-
-  fs.readFile(filePath, 'utf8', (err, fileData) => {
-    if (err && err.code !== 'ENOENT') {
-      console.error('Error leyendo el archivo:', err);
-      return res.status(500).json({ error: 'Error leyendo el archivo' });
-    }
-
-    const jsonData = fileData ? JSON.parse(fileData) : [];
-    res.status(200).json(jsonData);
-  });
 });
 
 // Iniciar el servidor
-app.listen(port, () => {
-  console.log(`Servidor corriendo en http://localhost:${port}`);
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
