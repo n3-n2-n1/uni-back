@@ -36,10 +36,14 @@ const Order = mongoose.model('Order', orderSchema);
 app.post('/orders', async (req, res) => {
   const cart = req.body.cart;
 
+  // Añadir registro de depuración
+  console.log('Datos recibidos en el servidor:', cart);
+
   try {
     const newOrder = await Order.insertMany(cart);
     res.status(201).json(newOrder);
   } catch (error) {
+    console.log('Error al insertar en MongoDB:', error);
     res.status(400).json({ error: error.message });
   }
 });
