@@ -22,8 +22,15 @@ app.post('/data', (req, res) => {
   const data = req.body;
   const filePath = path.join(__dirname, 'data.json');
 
+  console.log('Datos recibidos:', data);
+
+  if (!data || !data.cart) {
+    return res.status(400).json({ error: 'Datos inválidos, se esperaba un campo "cart"' });
+  }
+
   fs.readFile(filePath, 'utf8', (err, fileData) => {
     if (err && err.code !== 'ENOENT') {
+      console.error('Error leyendo el archivo:', err);
       return res.status(500).json({ error: 'Error leyendo el archivo' });
     }
 
@@ -32,6 +39,7 @@ app.post('/data', (req, res) => {
 
     fs.writeFile(filePath, JSON.stringify(jsonData, null, 2), (err) => {
       if (err) {
+        console.error('Error guardando los datos:', err);
         return res.status(500).json({ error: 'Error guardando los datos' });
       }
 
@@ -46,6 +54,7 @@ app.get('/data', (req, res) => {
 
   fs.readFile(filePath, 'utf8', (err, fileData) => {
     if (err && err.code !== 'ENOENT') {
+      console.error('Error leyendo el archivo:', err);
       return res.status(500).json({ error: 'Error leyendo el archivo' });
     }
 
