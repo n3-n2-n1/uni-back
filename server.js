@@ -16,10 +16,13 @@ app.use(express.json());
 
 // Conexión a MongoDB Atlas
 const uri = 'mongodb+srv://krystalloquartz:t1OZku8vzjBJE0qG@cluster0.mongodb.net/uni-test?retryWrites=true&w=majority:27017';
-mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(() => console.log('MongoDB connected'))
+mongoose.connect(uri, {
+  useNewUrlParser: true,
+  useUnifiedTopology: true,
+  serverSelectionTimeoutMS: 30000, // Aumenta el tiempo de espera a 30 segundos
+  socketTimeoutMS: 45000 // Aumenta el tiempo de espera del socket a 45 segundos
+}).then(() => console.log('MongoDB connected'))
   .catch(err => console.error('MongoDB connection error:', err));
-
 // Esquema y modelo de Pedido
 const orderSchema = new mongoose.Schema({
   id: Number,
