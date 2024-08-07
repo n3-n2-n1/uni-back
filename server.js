@@ -1,5 +1,5 @@
 const express = require('express');
-const { MongoClient } = require('mongodb');
+const mongoose = require('mongoose');
 const cors = require('cors');
 
 const app = express();
@@ -15,15 +15,22 @@ app.use(cors({
 app.use(express.json());
 
 // Conexión a MongoDB Atlas
-const uri = 'mongodb+srv://krystalloquartz:t1OZku8vzjBJE0qG@cluster0.mongodb.net/uni-test?retryWrites=true&w=majority';
-let db;
+const uri = 'mongodb+srv://krystalloquartz:t1OZku8vzjBJE0qG@cluster0.mongodb.net/uni-test?retryWrites=true&w=majority:27017';
+mongoose.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
+  .then(() => console.log('MongoDB connected'))
+  .catch(err => console.log(err));
 
-MongoClient.connect(uri, { useNewUrlParser: true, useUnifiedTopology: true })
-  .then(client => {
-    db = client.db('uni-test');
-    console.log('MongoDB connected');
-  })
-  .catch(err => console.error('MongoDB connection error:', err));
+// Esquema y modelo de Pedido
+const orderSchema = new mongoose.Schema({
+  id: Number,
+  name: String,
+  description: String,
+  price: Number,
+  quantity: Number,
+  image: String,
+});
+
+const Order = mongoose.model('Order', orderSchema);
 
 // Ruta para manejar las solicitudes de pedidos
 app.post('/orders', async (req, res) => {
@@ -32,15 +39,9 @@ app.post('/orders', async (req, res) => {
   // Añadir registro de depuración
   console.log('Datos recibidos en el servidor:', cart);
 
-  // Validar si cart es un array y no está vacío
-  if (!Array.isArray(cart) || cart.length === 0) {
-    return res.status(400).json({ error: 'Cart must be a non-empty array' });
-  }
-
   try {
-    const result = await db.collection('orders').insertMany(cart);
-    console.log('Datos insertados en MongoDB:', result.ops);
-    res.status(201).json(result.ops);
+    const newOrder = await Order.insertMany(cart);
+    res.status(201).json(newOrder);
   } catch (error) {
     console.log('Error al insertar en MongoDB:', error);
     res.status(400).json({ error: error.message });
