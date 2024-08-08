@@ -26,7 +26,7 @@ const ordersRouter = (pool) => {
 
       // Manejo de errores de duplicados
       if (error.code === 'ER_DUP_ENTRY') {
-        res.status(409).json({ error: 'Pedido duplicado' });
+        res.status(409).json({ error: 'Pedido duplicado. Uno o más productos ya existen en la base de datos.' });
       } else {
         res.status(400).json({ error: error.message });
       }
