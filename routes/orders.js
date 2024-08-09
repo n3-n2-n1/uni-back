@@ -19,7 +19,7 @@ const ordersRouter = (pool) => {
       await connection.query(query, [values]);
       await connection.commit();
 
-      res.status(201).json({ message: 'Pedidos insertados correctamente' });
+      res.status(201).json({ message: 'Pedidos insertados correctamente.' });
     } catch (error) {
       if (connection) await connection.rollback();
       console.error('Error al insertar en MySQL:', error);
