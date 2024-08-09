@@ -13,6 +13,9 @@ const ordersRouter = (pool) => {
       connection = await pool.getConnection();
       await connection.beginTransaction();
 
+      // Limpiar la tabla antes de insertar los nuevos datos
+      await connection.query('DELETE FROM orders');
+
       const query = 'INSERT INTO orders (id, name, description, price, quantity, image, provider, date) VALUES ?';
       const values = cart.map(item => [
         item.id, 
