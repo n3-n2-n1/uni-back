@@ -23,13 +23,7 @@ const ordersRouter = (pool) => {
     } catch (error) {
       if (connection) await connection.rollback();
       console.error('Error al insertar en MySQL:', error);
-
-      // Manejo de errores de duplicados
-      if (error.code === 'ER_DUP_ENTRY') {
-        res.status(409).json({ error: 'Pedido duplicado. Uno o más productos ya existen en la base de datos.' });
-      } else {
-        res.status(400).json({ error: error.message });
-      }
+      res.status(400).json({ error: error.message });
     } finally {
       if (connection) connection.release();
     }
