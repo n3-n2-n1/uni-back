@@ -13,8 +13,17 @@ const ordersRouter = (pool) => {
       connection = await pool.getConnection();
       await connection.beginTransaction();
 
-      const query = 'INSERT INTO orders (id, name, description, price, quantity, image) VALUES ?';
-      const values = cart.map(item => [item.id, item.name, item.description, item.price, item.quantity, item.image]);
+      const query = 'INSERT INTO orders (id, name, description, price, quantity, image, provider, date) VALUES ?';
+      const values = cart.map(item => [
+        item.id, 
+        item.name, 
+        item.description, 
+        item.price, 
+        item.quantity, 
+        item.image, 
+        item.provider || 'Julia Musso',  // Si no se envía desde el frontend, se asigna aquí
+        item.date || new Date() // Si no se envía desde el frontend, se asigna aquí
+      ]);
 
       await connection.query(query, [values]);
       await connection.commit();
