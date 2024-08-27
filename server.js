@@ -2,6 +2,7 @@ require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
 const ordersRouter = require('./routes/orders');
+const shopifyRouter = require('./routes/shopify');
 const { createPool } = require('./db');
 
 const app = express();
@@ -31,6 +32,7 @@ app.use(express.json());
 
 // Rutas
 app.use('/orders', ordersRouter(pool));
+app.use('/api', shopifyRouter); 
 
 // Iniciar el servidor
 app.listen(PORT, () => {
