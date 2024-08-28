@@ -32,7 +32,6 @@ app.use(express.json());
 
 // Rutas
 app.use('/orders', ordersRouter(pool));
-app.use('/api', shopifyRouter); 
 
 // Iniciar el servidor
 app.listen(PORT, () => {
