@@ -4,35 +4,28 @@ const axios = require('axios');
 const shopifyRouter = () => {
   const router = express.Router();
 
-  // Configuración de Axios con el token de acceso para Storefront API
+  // Configuración de Axios con un timeout optimizado
   const shopifyAxios = axios.create({
     baseURL: `https://012078-0f.myshopify.com/api/unstable/graphql.json`,
     headers: {
-      'X-Shopify-Storefront-Access-Token': '124cc182b560cc1a0aaa3d2993474093', // Asegúrate de que esta variable esté configurada correctamente
+      'X-Shopify-Storefront-Access-Token': '124cc182b560cc1a0aaa3d2993474093',
       'Content-Type': 'application/json'
-    }
+    },
+    timeout: 30000  // 30 segundos de timeout, aunque 50 segundos es el máximo en Vercel
   });
 
   router.get('/shopify/products', async (req, res) => {
     const query = `
       {
         collection(id: "gid://shopify/Collection/478674190640") {
-          products(first: 10) {
+          products(first: 5) {  // Limita a 5 productos para optimización
             edges {
               node {
                 id
                 title
-                description
                 priceRange {
                   minVariantPrice {
                     amount
-                  }
-                }
-                images(first: 1) {
-                  edges {
-                    node {
-                      src
-                    }
                   }
                 }
               }
